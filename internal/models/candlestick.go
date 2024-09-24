@@ -39,7 +39,7 @@ func (c Candlestick) Date() time.Time {
 	return c.date
 }
 
-func buildFrom(trades []Trade, interval string) []Candlestick {
+func CadlesticksFrom(trades []Trade, interval string) []Candlestick {
 	maxInterval, _ := time.ParseDuration(interval)
 	currentDate := trades[0].Date()
 
