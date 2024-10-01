@@ -4,15 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/sergioazevedo/argentum_go/internal/models"
 )
 
 const baseURL string = "https://data-api.binance.vision/api/v3"
 
 type BinanceAPIClient struct{}
 
-func (client *BinanceAPIClient) FetchRecentTrades(pair string, limit uint16) ([]models.BinanceTrade, error) {
+type BinanceTrade struct {
+	Price string  `json:"price"`
+	Qty   string  `json:"qty"`
+	Time  float64 `json:"time"`
+}
+
+func (client *BinanceAPIClient) FetchRecentTrades(pair string, limit uint16) ([]BinanceTrade, error) {
 	url := fmt.Sprintf(baseURL+"/trades?symbol=%s&limit=%d", pair, limit)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -24,7 +28,7 @@ func (client *BinanceAPIClient) FetchRecentTrades(pair string, limit uint16) ([]
 		return nil, err
 	}
 
-	list := make([]models.BinanceTrade, 0, limit)
+	list := make([]BinanceTrade, 0, limit)
 	json.NewDecoder(resp.Body).Decode(&list)
 
 	return list, nil
