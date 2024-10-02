@@ -1,80 +1,61 @@
 package models_test
 
 import (
-	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/sergioazevedo/argentum_go/internal/models"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/exp/rand"
 )
 
 func TestCandlesticsFrom(t *testing.T) {
-	trades := tradeList()
+	trades := tradeList(10, "10m", 2, time.Time{})
 
-	candles := models.CadlesticksFrom(trades, "10s")
-	assert.Len(t, candles, 3)
+	candles := models.CadlesticksFrom(trades, "24h")
+	assert.Len(t, candles, 5)
 }
 
-func tradeList() []models.Trade {
-	jsonString := `[
-    {
-        "id": 136839513,
-        "price": "53869.79000000",
-        "qty": "0.00039000",
-        "quoteQty": "21.00921810",
-        "time": 1726338631723,
-        "isBuyerMaker": true,
-        "isBestMatch": true
-    },
-    {
-        "id": 136839514,
-        "price": "53878.36000000",
-        "qty": "0.00086000",
-        "quoteQty": "46.33538960",
-        "time": 1726338638090,
-        "isBuyerMaker": false,
-        "isBestMatch": true
-    },
-    {
-        "id": 136839515,
-        "price": "53878.47000000",
-        "qty": "0.00619000",
-        "quoteQty": "333.50772930",
-        "time": 1726338644307,
-        "isBuyerMaker": true,
-        "isBestMatch": true
-    },
-    {
-        "id": 136839516,
-        "price": "53878.42000000",
-        "qty": "0.00620000",
-        "quoteQty": "334.04620400",
-        "time": 1726338646307,
-        "isBuyerMaker": true,
-        "isBestMatch": true
-    },
-    {
-        "id": 136839517,
-        "price": "53878.52000000",
-        "qty": "0.00620000",
-        "quoteQty": "334.04682400",
-        "time": 1726338647307,
-        "isBuyerMaker": true,
-        "isBestMatch": true
-    },
-    {
-        "id": 136839518,
-        "price": "53896.62000000",
-        "qty": "0.00619000",
-        "quoteQty": "333.62007780",
-        "time": 1726338678138,
-        "isBuyerMaker": false,
-        "isBestMatch": true
-    }
-	]`
+func tradeList(total int, interval string, perDay int, startDate time.Time) []models.Trade {
+	var currentDate time.Time
+	dateInterval, _ := time.ParseDuration(interval)
+	if (startDate == time.Time{}) {
+		currentDate = time.Now().Truncate(time.Hour)
+	} else {
+		currentDate = startDate
+	}
 
-	var jsonData models.TradesJSONData
-	_ = json.Unmarshal([]byte(jsonString), &jsonData)
+	result := make([]models.Trade, 0, total)
+	totalPerDay := 0
+	for i := 0; i < total; i++ {
+		qty := decimal.NewFromFloat(randomFloat64(0.3, 20.0))
+		price := decimal.NewFromFloat(randomFloat64(10.45, 98.87))
+		volume := price.Mul(qty)
 
-	return models.TradesFromJSON(jsonData)
+		trade, _ := models.NewTrade(
+			currentDate,
+			qty,
+			price,
+			volume,
+		)
+		result = append(result, trade)
+		totalPerDay++
+		currentDate = currentDate.Add(dateInterval)
+
+		if totalPerDay == perDay {
+			currentDate = currentDate.
+				AddDate(0, 0, 1).
+				Truncate(time.Hour)
+
+			totalPerDay = 0
+		}
+	}
+	return result
+}
+
+// generate random float in range of min and max inclusive
+func randomFloat64(min, max float64) float64 {
+	rand.Seed(102478)
+	return (min + rand.Float64()*(max-min))
 }

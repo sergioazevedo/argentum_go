@@ -40,7 +40,10 @@ func (c Candlestick) Date() time.Time {
 }
 
 func CadlesticksFrom(trades []Trade, interval string) []Candlestick {
-	maxInterval, _ := time.ParseDuration(interval)
+	maxInterval, err := time.ParseDuration(interval)
+	if err != nil {
+		return nil
+	}
 	currentDate := trades[0].Date()
 
 	candle := Candlestick{
@@ -55,7 +58,7 @@ func CadlesticksFrom(trades []Trade, interval string) []Candlestick {
 	for i, v := range trades {
 		tradeInteval := v.Date().Sub(currentDate)
 		// check if the current trade is in candle the interval
-		if tradeInteval <= maxInterval {
+		if tradeInteval < maxInterval {
 			candle.volume = candle.volume.Add(v.Volume())
 			// check high price
 			if v.Price().GreaterThan(candle.high) {

@@ -14,6 +14,22 @@ type Trade struct {
 	volume   decimal.Decimal
 }
 
+func (trade Trade) Date() time.Time {
+	return trade.date
+}
+
+func (trade Trade) Quantity() decimal.Decimal {
+	return trade.quantity
+}
+
+func (trade Trade) Price() decimal.Decimal {
+	return trade.price
+}
+
+func (trade Trade) Volume() decimal.Decimal {
+	return trade.volume
+}
+
 func NewTrade(
 	date time.Time,
 	quantity decimal.Decimal,
@@ -40,20 +56,4 @@ func NewTrade(
 		price:    price,
 		volume:   volume,
 	}, nil
-}
-
-func (trade Trade) Date() time.Time {
-	return trade.date
-}
-
-func (trade Trade) Quantity() decimal.Decimal {
-	return trade.quantity
-}
-
-func (trade Trade) Price() decimal.Decimal {
-	return trade.price
-}
-
-func (trade Trade) Volume() decimal.Decimal {
-	return trade.volume
 }
