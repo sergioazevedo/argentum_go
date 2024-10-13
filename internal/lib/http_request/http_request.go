@@ -15,7 +15,7 @@ func Perform(req *http.Request) (*http.Response, error) {
 
 	if resp.StatusCode != 200 {
 		defer resp.Body.Close()
-		return nil, fmt.Errorf("%s", resp.Body)
+		return resp, fmt.Errorf("%s", resp.Body)
 	}
 
 	return resp, nil
