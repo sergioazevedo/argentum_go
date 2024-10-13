@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/sergioazevedo/argentum_go/internal/lib/http_request"
 	"github.com/shopspring/decimal"
 )
 
@@ -22,7 +23,7 @@ func (c APIClient) FetchRecentTrades(pair string, limit int16) (Trades, error) {
 		return nil, err
 	}
 
-	resp, err := performRequest(req)
+	resp, err := http_request.Perform(req)
 	if err != nil {
 		return nil, err
 	}
@@ -32,22 +33,6 @@ func (c APIClient) FetchRecentTrades(pair string, limit int16) (Trades, error) {
 	trades := jsonData.Result[pair]
 
 	return trades, nil
-}
-
-func performRequest(req *http.Request) (*http.Response, error) {
-	httpClient := &http.Client{}
-	resp, err := httpClient.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		defer resp.Body.Close()
-		return nil, fmt.Errorf("%s", resp.Body)
-	}
-
-	return resp, nil
 }
 
 // KrakenResponse wraps the Kraken API JSON response
