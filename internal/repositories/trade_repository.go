@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/sergioazevedo/argentum_go/internal/models"
-	services "github.com/sergioazevedo/argentum_go/internal/services/binance"
+	"github.com/sergioazevedo/argentum_go/internal/services/binance"
 	"github.com/sergioazevedo/argentum_go/internal/services/kraken"
 	"github.com/shopspring/decimal"
 )
@@ -12,7 +12,7 @@ import (
 type TradeRepository struct{}
 
 func (r TradeRepository) FetchRecentTradesFromBinance(pair string, limit int16) ([]models.Trade, error) {
-	binance := services.BinanceAPIClient{}
+	binance := binance.APIClient{}
 	binanceTrades, _ := binance.FetchRecentTrades(pair, uint16(limit))
 
 	return buildFromBinanceTrades(binanceTrades), nil
@@ -27,7 +27,7 @@ func (r TradeRepository) FetchRecentTradesFromKraken(pair string, limit int16) (
 	return list, nil
 }
 
-func buildFromKrakenTrades(krakenTrades kraken.KrakenTrades) []models.Trade {
+func buildFromKrakenTrades(krakenTrades kraken.Trades) []models.Trade {
 	list := make([]models.Trade, 0, len(krakenTrades))
 	for _, v := range krakenTrades {
 		_time := int64(v[2].(float64))
@@ -49,7 +49,7 @@ func buildFromKrakenTrades(krakenTrades kraken.KrakenTrades) []models.Trade {
 	return list
 }
 
-func buildFromBinanceTrades(binanceTrades []services.BinanceTrade) []models.Trade {
+func buildFromBinanceTrades(binanceTrades []binance.Trade) []models.Trade {
 	list := make([]models.Trade, 0, len(binanceTrades))
 	for _, v := range binanceTrades {
 		_price, _ := decimal.NewFromString(v.Price)

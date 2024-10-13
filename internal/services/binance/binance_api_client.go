@@ -1,4 +1,4 @@
-package services
+package binance
 
 import (
 	"encoding/json"
@@ -8,15 +8,15 @@ import (
 
 const baseURL string = "https://data-api.binance.vision/api/v3"
 
-type BinanceAPIClient struct{}
+type APIClient struct{}
 
-type BinanceTrade struct {
+type Trade struct {
 	Price string  `json:"price"`
 	Qty   string  `json:"qty"`
 	Time  float64 `json:"time"`
 }
 
-func (client *BinanceAPIClient) FetchRecentTrades(pair string, limit uint16) ([]BinanceTrade, error) {
+func (client *APIClient) FetchRecentTrades(pair string, limit uint16) ([]Trade, error) {
 	url := fmt.Sprintf(baseURL+"/trades?symbol=%s&limit=%d", pair, limit)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -28,7 +28,7 @@ func (client *BinanceAPIClient) FetchRecentTrades(pair string, limit uint16) ([]
 		return nil, err
 	}
 
-	list := make([]BinanceTrade, 0, limit)
+	list := make([]Trade, 0, limit)
 	json.NewDecoder(resp.Body).Decode(&list)
 
 	return list, nil

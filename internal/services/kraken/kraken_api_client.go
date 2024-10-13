@@ -11,11 +11,11 @@ import (
 
 type APIClient struct{}
 
-type KrakenTrades [][]interface{}
+type Trades [][]interface{}
 
 const baseURL string = "https://api.kraken.com/0/public"
 
-func (c APIClient) FetchRecentTrades(pair string, limit int16) (KrakenTrades, error) {
+func (c APIClient) FetchRecentTrades(pair string, limit int16) (Trades, error) {
 	url := fmt.Sprintf(baseURL+"/Trades?pair=%s&count=%d", pair, limit)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
