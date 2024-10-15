@@ -10,14 +10,27 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type APIClient struct{}
+const DEFAULT_BASE_URL string = "https://api.kraken.com/0/public"
+
+type APIClient struct {
+	BaseURL string
+}
 
 type Trades [][]interface{}
 
-const baseURL string = "https://api.kraken.com/0/public"
+func NewClient(baseUrl string) *APIClient {
+	value := baseUrl
+	if baseUrl == "" {
+		value = DEFAULT_BASE_URL
+	}
+
+	return &APIClient{
+		BaseURL: value,
+	}
+}
 
 func (c APIClient) FetchRecentTrades(pair string, limit int16) (Trades, error) {
-	url := fmt.Sprintf(baseURL+"/Trades?pair=%s&count=%d", pair, limit)
+	url := fmt.Sprintf(c.BaseURL+"/Trades?pair=%s&count=%d", pair, limit)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
