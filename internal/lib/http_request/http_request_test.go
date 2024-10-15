@@ -2,18 +2,15 @@ package http_request_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/sergioazevedo/argentum_go/internal/lib/http_request"
+	"github.com/sergioazevedo/argentum_go/internal/lib/servertest"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_Perform_SucessfullRequest(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"key":"value"}`))
-	}))
+	server := servertest.NewTestServer(http.StatusOK, `{"key":"value"}`)
 	defer server.Close()
 
 	request, _ := http.NewRequest("GET", server.URL, nil)
@@ -26,10 +23,7 @@ func Test_Perform_SucessfullRequest(t *testing.T) {
 }
 
 func Test_Perform_FailedRequest(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(`Some Error`))
-	}))
+	server := servertest.NewTestServer(http.StatusInternalServerError, `Some Error`)
 	defer server.Close()
 
 	request, _ := http.NewRequest("GET", server.URL, nil)

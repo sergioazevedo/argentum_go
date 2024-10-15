@@ -2,9 +2,9 @@ package binance_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
+	"github.com/sergioazevedo/argentum_go/internal/lib/servertest"
 	"github.com/sergioazevedo/argentum_go/internal/services/binance"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,18 +30,8 @@ const fakeTradeData = `[
 	}
 ]`
 
-func fakeServer(statusCode int, responseData string) *httptest.Server {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(statusCode)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(responseData))
-	}))
-
-	return server
-}
-
 func TestAPIClient_FetchRecentTrades_Returns_Empty_List_Request_Fails(t *testing.T) {
-	server := fakeServer(http.StatusBadRequest, "Error")
+	server := servertest.NewTestServer(http.StatusBadRequest, "Error")
 
 	client := binance.NewClient(server.URL)
 	tradeList, err := client.FetchRecentTrades("BTCEUR", 2)
@@ -54,7 +44,7 @@ func TestAPIClient_FetchRecentTrades_Returns_Empty_List_Request_Fails(t *testing
 
 func TestAPIClient_FetchRecentTrades_Returns_Trade_List_Request_OK(t *testing.T) {
 
-	server := fakeServer(http.StatusOK, fakeTradeData)
+	server := servertest.NewTestServer(http.StatusOK, fakeTradeData)
 
 	client := binance.NewClient(server.URL)
 	tradeList, err := client.FetchRecentTrades("BTCEUR", 2)
