@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/sergioazevedo/argentum_go/internal/lib/servertest"
-	"github.com/sergioazevedo/argentum_go/internal/services/binance"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/sergioazevedo/argentum_go/internal/api/binance"
+	"github.com/sergioazevedo/argentum_go/internal/lib/servertest"
 )
 
 const fakeTradeData = `[

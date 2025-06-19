@@ -39,53 +39,53 @@ func (c Candlestick) Date() time.Time {
 	return c.date
 }
 
-func CadlesticksFrom(trades []Trade, interval string) []Candlestick {
-	maxInterval, err := time.ParseDuration(interval)
-	if err != nil {
-		return nil
-	}
-	currentDate := trades[0].Date()
+// func CadlesticksFrom(trades []trade.Trade, interval string) []Candlestick {
+// 	maxInterval, err := time.ParseDuration(interval)
+// 	if err != nil {
+// 		return nil
+// 	}
+// 	currentDate := trades[0].Date()
 
-	candle := Candlestick{
-		date:   currentDate,
-		open:   trades[0].Price(),
-		high:   trades[0].Price(),
-		low:    trades[0].Price(),
-		volume: trades[0].Volume(),
-	}
-	result := make([]Candlestick, 0, 50)
+// 	candle := Candlestick{
+// 		date:   currentDate,
+// 		open:   trades[0].Price(),
+// 		high:   trades[0].Price(),
+// 		low:    trades[0].Price(),
+// 		volume: trades[0].Volume(),
+// 	}
+// 	result := make([]Candlestick, 0, 50)
 
-	for i, v := range trades {
-		tradeInteval := v.Date().Sub(currentDate)
-		// check if the current trade is in candle the interval
-		if tradeInteval < maxInterval {
-			candle.volume = candle.volume.Add(v.Volume())
-			// check high price
-			if v.Price().GreaterThan(candle.high) {
-				candle.high = v.Price()
-			}
-			// check low price
-			if v.Price().LessThan(candle.low) {
-				candle.low = v.Price()
-			}
-		} else {
-			// the trade is out of candle interval
-			// fetch previous trade price as candle closing price
-			candle.close = trades[i-1].Price()
-			// adds candle to the result list
-			result = append(result, candle)
-			//initialize the new base Date and a new candle
-			currentDate = v.Date()
-			candle = Candlestick{
-				date: currentDate,
-				open: v.Price(),
-				high: v.Price(),
-				low:  v.Price(),
-			}
-		}
-	}
-	// fetches last trade price as candle closing price
-	candle.close = trades[len(trades)-1].Price()
+// 	for i, v := range trades {
+// 		tradeInteval := v.Date().Sub(currentDate)
+// 		// check if the current trade is in candle the interval
+// 		if tradeInteval < maxInterval {
+// 			candle.volume = candle.volume.Add(v.Volume())
+// 			// check high price
+// 			if v.Price().GreaterThan(candle.high) {
+// 				candle.high = v.Price()
+// 			}
+// 			// check low price
+// 			if v.Price().LessThan(candle.low) {
+// 				candle.low = v.Price()
+// 			}
+// 		} else {
+// 			// the trade is out of candle interval
+// 			// fetch previous trade price as candle closing price
+// 			candle.close = trades[i-1].Price()
+// 			// adds candle to the result list
+// 			result = append(result, candle)
+// 			//initialize the new base Date and a new candle
+// 			currentDate = v.Date()
+// 			candle = Candlestick{
+// 				date: currentDate,
+// 				open: v.Price(),
+// 				high: v.Price(),
+// 				low:  v.Price(),
+// 			}
+// 		}
+// 	}
+// 	// fetches last trade price as candle closing price
+// 	candle.close = trades[len(trades)-1].Price()
 
-	return append(result, candle)
-}
+// 	return append(result, candle)
+// }
