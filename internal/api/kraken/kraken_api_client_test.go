@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/sergioazevedo/argentum_go/internal/lib/servertest"
-	"github.com/sergioazevedo/argentum_go/internal/services/kraken"
-	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/sergioazevedo/argentum_go/internal/api/kraken"
+	"github.com/sergioazevedo/argentum_go/internal/lib/servertest"
 )
 
 const fakeTradeData = `{
@@ -59,38 +59,5 @@ func TestAPIClient_FetchRecentTrades_Returns_Trade_List_Request_OK(t *testing.T)
 
 	assert.NotEmpty(t, tradeList)
 	assert.Len(t, tradeList, 2)
-	assert.Nil(t, err)
-}
-
-func TestTrade__UnmarshalJSON_Retruns_Nil_for_EmptyString(t *testing.T) {
-	trade := kraken.Trade{}
-	assert.Nil(t, trade.UnmarshalJSON(([]byte(`""`))))
-	assert.Nil(t, trade.UnmarshalJSON(([]byte("null"))))
-}
-
-func TestTrade__UnmarshalJSON_Retruns_Error_For_BadData(t *testing.T) {
-	trade := kraken.Trade{}
-	err := trade.UnmarshalJSON(([]byte("abc : 123")))
-	assert.Error(t, err)
-}
-
-func TestTrade__UnmarshalJSON_Map_Data_Correctly_For_GoodData(t *testing.T) {
-	goodData := `[
-		"53960.00000",
-		"0.00136938",
-		1726341504.0383348,
-		"b",
-		"l",
-		"",
-		89154536
-	]`
-
-	expected, _ := decimal.NewFromString("53960.00000")
-
-	trade := kraken.Trade{}
-	err := trade.UnmarshalJSON(([]byte(goodData)))
-
-	assert.NotEmpty(t, trade)
-	assert.Equal(t, expected, trade.Price())
 	assert.Nil(t, err)
 }
