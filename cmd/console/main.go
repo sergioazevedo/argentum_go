@@ -6,6 +6,7 @@ import (
 
 	"github.com/sergioazevedo/argentum_go/internal/api/binance"
 	"github.com/sergioazevedo/argentum_go/internal/api/kraken"
+	candlestick "github.com/sergioazevedo/argentum_go/internal/candlelstick"
 	"github.com/sergioazevedo/argentum_go/internal/trade"
 )
 
@@ -42,7 +43,11 @@ func main() {
 	fmt.Println("Binance Trades::")
 	fmt.Println(binanceTrades[0].Date.Format(time.RFC3339))
 
-	// c := models.CadlesticksFrom(trades, "1s")
-	// fmt.Println("Candlesticks:")
-	// fmt.Println(c)
+	c := candlestick.FromTrades(trades, "1s")
+	fmt.Println("Kraken Candlesticks:")
+	fmt.Println(c)
+
+	c2 := candlestick.FromTrades(binanceTrades, "1s")
+	fmt.Println("Binance Candlesticks:")
+	fmt.Println(c2)
 }

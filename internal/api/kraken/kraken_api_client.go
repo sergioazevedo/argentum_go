@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -65,8 +67,19 @@ func (c APIClient) FetchRecentTrades(pair string, limit int16) ([]Trade, error) 
 			return nil, err
 		}
 
+		date := strconv.FormatFloat(trade[2].(float64), 'f', -1, 64)
+		dateParts := strings.Split(date, ".")
+		seconds, err := strconv.ParseInt(dateParts[0], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		milliseconds, err := strconv.ParseInt(dateParts[1], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
 		result = append(result, Trade{
-			Date:     time.UnixMilli(int64(trade[2].(float64))),
+			Date:     time.Unix(seconds, milliseconds).UTC(),
 			Volume:   volume,
 			Price:    price,
 			Quantity: volume.Div(price),

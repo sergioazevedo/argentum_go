@@ -3,6 +3,7 @@ package kraken_test
 import (
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -59,5 +60,7 @@ func TestAPIClient_FetchRecentTrades_Returns_Trade_List_Request_OK(t *testing.T)
 
 	assert.NotEmpty(t, tradeList)
 	assert.Len(t, tradeList, 2)
+	assert.Equal(t, tradeList[0].Date, time.Unix(1726341504, 383348).UTC())
+	assert.Equal(t, tradeList[1].Date, time.Unix(1726341510, 5618985).UTC())
 	assert.Nil(t, err)
 }
