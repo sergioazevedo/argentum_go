@@ -19,7 +19,11 @@ type APIClient struct {
 	BaseURL string
 }
 
-type KrakenTrades [][]interface{}
+// KrakenResponse wraps the Kraken API JSON response
+type KrakenResponse struct {
+	Error  []string
+	Result map[string]([][]interface{})
+}
 
 type Trade struct {
 	Date     time.Time
@@ -87,10 +91,4 @@ func (c APIClient) FetchRecentTrades(pair string, limit int16) ([]Trade, error) 
 	}
 
 	return result, nil
-}
-
-// KrakenResponse wraps the Kraken API JSON response
-type KrakenResponse struct {
-	Error  []string
-	Result map[string]([][]interface{})
 }
