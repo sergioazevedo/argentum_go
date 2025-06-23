@@ -81,7 +81,14 @@ func buildChart(candlesticks []candlestick.Candlestick, chartOptions []charts.Gl
 	chart := charts.NewKLine()
 	chart.SetGlobalOptions(chartOptions...)
 	xAxisData, seriesData := mapCandlestickToChartData(candlesticks)
-	chart.SetXAxis(xAxisData).AddSeries(name, seriesData)
+	chart.SetXAxis(xAxisData).AddSeries(name, seriesData,
+		// fix candlestick colors
+		charts.WithItemStyleOpts(opts.ItemStyle{
+			Color:        "#47b262",
+			Color0:       "#eb5454",
+			BorderColor:  "#47b262",
+			BorderColor0: "#eb5454",
+		}))
 
 	return chart
 }
@@ -90,11 +97,11 @@ func mapCandlestickToChartData(candlesticks []candlestick.Candlestick) (xAxisDat
 	xAxisData := []string{}
 	seriesData := []opts.KlineData{}
 	for _, c := range candlesticks {
-		arr := [4]float64{}
-		arr[0] = c.Open.InexactFloat64()
-		arr[1] = c.Close.InexactFloat64()
-		arr[2] = c.Low.InexactFloat64()
-		arr[3] = c.High.InexactFloat64()
+		arr := [4]float32{}
+		arr[0] = float32(c.Open.InexactFloat64())
+		arr[1] = float32(c.Close.InexactFloat64())
+		arr[2] = float32(c.Low.InexactFloat64())
+		arr[3] = float32(c.High.InexactFloat64())
 
 		xAxisData = append(xAxisData, c.Date.Format("2006-01-02 15:04:05"))
 		seriesData = append(seriesData, opts.KlineData{Value: arr})
